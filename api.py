@@ -5,7 +5,7 @@ from io import BytesIO
 import numpy as np
 
 app = FastAPI()
-model1_path = "./01_dog_cat_images/dog_cat_version_01_accuracy_81.h5"
+model1_path = "./dog_cat_version_01_accuracy_81.h5"
 model = tf.keras.models.load_model(model1_path)
 
 
@@ -26,3 +26,4 @@ async def predict(file: UploadFile = File(...)):
     print(prediction)
     return {"label":"dog" if prediction>=0.5 else "cat",
             "prediction":prediction}
+
