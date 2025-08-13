@@ -1,0 +1,28 @@
+from fastapi import FastAPI, UploadFile,File
+import tensorflow as tf
+from PIL import Image
+from io import BytesIO
+import numpy as np
+
+app = FastAPI()
+model1_path = "./01_dog_cat_images/dog_cat_version_01_accuracy_81.h5"
+model = tf.keras.models.load_model(model1_path)
+
+
+@app.get("/")
+def hello():
+    return {"message":"to /docs route for "}
+
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
+    uploaded_file = await file.read()
+    img = Image.open(BytesIO(uploaded_file))
+    img = img.convert("L")
+    img = img.resize((200,200))
+    img = np.array(img)
+    img = img/255.0
+    img = img.reshape((1,200,200))
+    prediction=float(model.predict(img)[0][0])
+    print(prediction)
+    return {"label":"dog" if prediction>=0.5 else "cat",
+            "prediction":prediction}
