@@ -1,10 +1,20 @@
 from fastapi import FastAPI, UploadFile,File
+from fastapi.middleware.cors import CORSMiddleware
 import tensorflow as tf
 from PIL import Image
 from io import BytesIO
 import numpy as np
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 model1_path = "./dog_cat_version_01_accuracy_80.h5"
 model = tf.keras.models.load_model(model1_path)
 
@@ -26,5 +36,6 @@ async def predict(file: UploadFile = File(...)):
     print(prediction)
     return {"label":"dog" if prediction>=0.5 else "cat",
             "prediction":prediction}
+
 
 
