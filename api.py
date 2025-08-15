@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile,File,Query
+from fastapi.middleware.cors import CORSMiddleware
 import tensorflow as tf
 from PIL import Image
 from io import BytesIO
@@ -71,4 +72,5 @@ async def predict(file: UploadFile = File(...),model_no=Query(default=1,example=
         prediction=float(models[model_no-1].predict(img)[0][0])
         print(prediction)
         return {"label":"dog" if prediction>=0.5 else "cat",
+
                 "prediction":prediction}
